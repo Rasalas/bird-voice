@@ -296,6 +296,10 @@
       .sticky-actions {
         display: grid;
       }
+
+      .controls .mode > button {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -427,14 +431,20 @@
 
     function setLiveButtonState(running) {
       for (const button of els.liveButtons) {
-        button.textContent = running ? "Live-Monitor stoppen" : "Live-Monitor starten";
+        const shortLabel = button.closest(".sticky-actions");
+        button.textContent = running
+          ? (shortLabel ? "Live stoppen" : "Live-Monitor stoppen")
+          : (shortLabel ? "Live starten" : "Live-Monitor starten");
         button.classList.toggle("danger", running);
       }
     }
 
     function setHoldButtonState(recording) {
       for (const button of els.holdButtons) {
-        button.textContent = recording ? "Aufnahme läuft... loslassen" : "Gedrückt halten zum Aufnehmen";
+        const shortLabel = button.closest(".sticky-actions");
+        button.textContent = recording
+          ? (shortLabel ? "Loslassen" : "Aufnahme läuft... loslassen")
+          : (shortLabel ? "Aufnehmen" : "Gedrückt halten zum Aufnehmen");
         button.classList.toggle("recording", recording);
       }
     }
@@ -468,13 +478,14 @@
 
           constructor() {
             super();
-            this.bufferSize = 65536;
+            this.bufferSize = Math.ceil(sampleRate * 1.5);
             this.buffer = new Float32Array(this.bufferSize);
             this.writeIndex = 0;
             this.phase = 0;
-            this.minDelay = Math.floor(sampleRate * 0.04);
-            this.maxDelay = Math.floor(sampleRate * 0.32);
+            this.minDelay = Math.floor(sampleRate * 0.08);
+            this.maxDelay = Math.floor(sampleRate * 0.55);
             this.range = this.maxDelay - this.minDelay;
+            this.grains = [0, 0.25, 0.5, 0.75];
           }
 
           readInterpolated(index) {
@@ -491,7 +502,7 @@
               ? this.minDelay + p * this.range
               : this.maxDelay - p * this.range;
             const readIndex = this.writeIndex - delay;
-            const window = Math.sin(Math.PI * p);
+            const window = Math.max(0, Math.sin(Math.PI * p));
             return {
               sample: this.readInterpolated(readIndex),
               weight: window
@@ -523,10 +534,16 @@
                 outL[i] = mono;
                 outR[i] = mono;
               } else {
-                const a = this.tap(this.phase, direction);
-                const b = this.tap(this.phase + 0.5, direction);
-                const sum = Math.max(0.0001, a.weight + b.weight);
-                const y = (a.sample * a.weight + b.sample * b.weight) / sum;
+                let weighted = 0;
+                let weights = 0;
+
+                for (const offset of this.grains) {
+                  const grain = this.tap(this.phase + offset, direction);
+                  weighted += grain.sample * grain.weight;
+                  weights += grain.weight;
+                }
+
+                const y = weighted / Math.max(0.0001, weights);
 
                 outL[i] = y;
                 outR[i] = y;
