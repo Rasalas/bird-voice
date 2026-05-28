@@ -308,9 +308,8 @@
     <header>
       <h1>Bird Lowerer</h1>
       <p class="lead">
-        Kleiner Web-Audio-Prototyp: Mikrofon aufnehmen, hohe Naturgeräusche fokussieren
-        und tiefer ausgeben. Live am besten mit Kopfhörern, ohne Kopfhörer über
-        "gedrückt halten -> loslassen -> abspielen".
+        Kleiner Web-Audio-Prototyp: kurz aufnehmen und hohe Naturgeräusche natürlich tiefer abspielen.
+        Der Aufnahme-Modus klingt echter, weil er die Wiedergabe einfach verlangsamt statt live zu rechnen.
       </p>
     </header>
 
@@ -327,12 +326,12 @@
           <label for="pitch">
             Tonhöhe absenken
             <div class="range-row">
-              <input id="pitch" type="range" min="-24" max="0" value="-12" step="1" />
-              <span id="pitchValue" class="value">-12 st</span>
+              <input id="pitch" type="range" min="-24" max="0" value="-7" step="1" />
+              <span id="pitchValue" class="value">-7 st</span>
             </div>
           </label>
           <p class="small">
-            -12 Halbtöne = ungefähr eine Oktave tiefer. -6 ist natürlicher, -18 bis -24 stärker verfremdet.
+            -5 bis -8 Halbtöne klingt meist natürlicher. Eine ganze Oktave tiefer ist stärker, aber schneller künstlich.
           </p>
         </div>
 
@@ -351,33 +350,33 @@
 
         <label class="checkbox">
           <input id="birdFilter" type="checkbox" checked />
-          <span>Bird-Focus-Filter aktivieren. Dadurch werden tiefe Geräusche vor dem Pitch-Shifter reduziert.</span>
+          <span>Bird-Focus-Filter aktivieren. Dadurch werden tiefe Umgebungsgeräusche reduziert.</span>
         </label>
 
         <label class="checkbox">
           <input id="preserveDuration" type="checkbox" />
-          <span>Beim Abspielen nach Aufnahme die Länge möglichst behalten. Aus = stabiler und weniger wackelig, aber langsamer.</span>
+          <span>Experimentell: Aufnahme ungefähr gleich lang halten. Aus = echter klingend, aber langsamer.</span>
         </label>
 
         <div class="mode">
           <div class="mode-title">
-            <strong>Live mit Kopfhörern</strong>
-            <span class="pill">direkter, weniger Echo</span>
+            <strong>Echter Klang</strong>
+            <span class="pill">empfohlen</span>
           </div>
-          <button class="live-button">Live-Monitor starten</button>
-          <p class="small warning">
-            Nicht laut über Handy-Lautsprecher nutzen. Das kann pfeifen oder rückkoppeln.
+          <button class="hold-button secondary">Gedrückt halten zum Aufnehmen</button>
+          <p class="small">
+            Halten = aufnehmen. Loslassen = tiefer abspielen. Das ist nicht live, klingt aber am wenigsten künstlich.
           </p>
         </div>
 
         <div class="mode">
           <div class="mode-title">
-            <strong>Ohne Kopfhörer</strong>
-            <span class="pill">rückkopplungsarm</span>
+            <strong>Live mit Kopfhörern</strong>
+            <span class="pill">experimentell</span>
           </div>
-          <button class="hold-button secondary">Gedrückt halten zum Aufnehmen</button>
-          <p class="small">
-            Halten = aufnehmen. Loslassen = Aufnahme tiefer abspielen. Funktioniert besser für kurze Vogellaute.
+          <button class="live-button">Live-Monitor starten</button>
+          <p class="small warning">
+            Live-Pitch kann je nach Gerät künstlich klingen. Nicht laut über Handy-Lautsprecher nutzen.
           </p>
         </div>
       </div>
@@ -390,8 +389,8 @@
   </main>
 
   <div class="sticky-actions" aria-label="Schnellzugriff">
-    <button class="live-button">Live starten</button>
     <button class="hold-button secondary">Aufnehmen</button>
+    <button class="live-button">Live starten</button>
   </div>
 
   <script>
